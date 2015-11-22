@@ -16,8 +16,8 @@ WECHAT_TOKEN = 'jcgalileo'
 AppID = ''
 AppSecret = ''
 
-fp_tmp = open('log_tmp.txt','wa')
-fp_tmp_tail = open('log_tmp_tail.txt','wr')
+fp_tmp = open('log_tmp.txt','a+')
+fp_tmp_tail = open('log_tmp_tail.txt','r+')
 
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
@@ -57,15 +57,16 @@ def index(request):
         if isinstance(message, TextMessage):
             # 当前会话内容
             content = message.content.strip()
-            if content == '功能':
+            if content == u'功能':
                 reply_text = (
                         '目前支持的功能：\n1...'
                         '2...\n'
                 )
-            if content == '温度':
-                reply_text = fp_tmp_tail.realine()
-                                                
-            response = wechat_instance.response_text(content=reply_text)
+                response = wechat_instance.response_text(content=reply_text)
+            if content == u'温度':
+                reply_text = fp_tmp_tail.readline()
+                fp_tmp_tail.seek(0)
+                response = wechat_instance.response_text(content=reply_text)
  
         return HttpResponse(response, content_type="application/xml")
 
