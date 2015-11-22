@@ -14,6 +14,8 @@
         <limit-as>512</limit-as>
         <reload-on-as>256</reload-on-as>
         <reload-on-rss>192</reload-on-rss>
+        <post-buffering>4096</post-buffering>
+        <pep333_input/>
         <vacuum/>
         <daemonize>/var/log/uwsgi.log</daemonize>
 </uwsgi>

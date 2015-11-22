@@ -16,7 +16,7 @@ WECHAT_TOKEN = 'jcgalileo'
 AppID = ''
 AppSecret = ''
 
-fp_tmp = open('log_tmp.txt','r+')
+fp_tmp = open('log_tmp.txt','a+')
 
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
@@ -33,12 +33,11 @@ def index(request):
     else:
         xmlstr = smart_str(request.body)
         xml = etree.fromstring(xmlstr)
-        temprature = xml.find('tmprature')
-        if temprature:
-            #fp_tmp.seek(0,2)
+        temprature = xml.find('temprature')
+        if temprature != None:
+            fp_tmp.seek(0,2)
             fp_tmp.write(temprature.text)
-            fp.write(temptature)
-
+            return HttpResponse("0")
         # 解析本次请求的 XML 数据
         try:
             wechat_instance.parse_data(data=request.body)
@@ -64,7 +63,7 @@ def index(request):
                 )
                 response = wechat_instance.response_text(content=reply_text)
             if content == u'温度':
-                fp_tmp.seek(-5, 2)
+                fp_tmp.seek(-4, 2)
                 reply_text = fp_tmp.read(4)
                 response = wechat_instance.response_text(content=reply_text)
  
