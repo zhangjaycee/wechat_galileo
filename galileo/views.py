@@ -5,6 +5,7 @@ from django.template import RequestContext, Template
 from django.utils.encoding import smart_str, smart_unicode
 import hashlib
 from xml.etree import ElementTree as etree
+import getinfo
 
 @csrf_exempt
 def index(request):
@@ -21,13 +22,14 @@ def index(request):
        MsgType = xml.find('MsgType').text
        Content = xml.find('Content').text
        MsgId = xml.find('MsgId').text
+       info = getinfo.getinfo(content)
        reply_xml = """<xml>
        <ToUserName><![CDATA[%s]]></ToUserName>
        <FromUserName><![CDATA[%s]]></FromUserName>
        <CreateTime>%s</CreateTime>
        <MsgType><![CDATA[text]]></MsgType>
        <Content><![CDATA[%s]]></Content>
-       </xml>"""%(FromUserName,ToUserName,CreateTime,Content + "  Hello world, this is test message")
+       </xml>"""%(FromUserName,ToUserName,CreateTime,Content + info)
        return HttpResponse(reply_xml)
 
 def checkSignature(request):
