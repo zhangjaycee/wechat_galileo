@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext, Template
@@ -15,6 +16,9 @@ WECHAT_TOKEN = 'jcgalileo'
 AppID = ''
 AppSecret = ''
 
+fp_tmp = open('log_tmp.txt','wa')
+fp_tmp_tail = open('log_tmp_tail.txt','wr')
+
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
     token=WECHAT_TOKEN
@@ -28,6 +32,13 @@ def index(request):
         response=HttpResponse(checkSignature(request))
         return response
     else:
+        xmlstr = smart_str(request.body)
+        xml = etree.fromstring(xmlstr)
+        temprature = xml.find('tmptature')
+        if temprature:
+            fp_tmp.write(temprature.text)
+            os.system("tail -1 log_tmp.txt > log_tmp_tail.txt")
+
         # 解析本次请求的 XML 数据
         try:
             wechat_instance.parse_data(data=request.body)
@@ -51,7 +62,9 @@ def index(request):
                         '目前支持的功能：\n1...'
                         '2...\n'
                 )
- 
+            if content == '温度':
+                reply_text = fp_tmp_tail.realine()
+                                                
             response = wechat_instance.response_text(content=reply_text)
  
         return HttpResponse(response, content_type="application/xml")
