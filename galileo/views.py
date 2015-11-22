@@ -22,7 +22,7 @@ def index(request):
        MsgType = xml.find('MsgType').text
        Content = xml.find('Content').text
        MsgId = xml.find('MsgId').text
-       info = getinfo.getinfo(content)
+       info = getinfo.getinfo(Content)
        reply_xml = """<xml>
        <ToUserName><![CDATA[%s]]></ToUserName>
        <FromUserName><![CDATA[%s]]></FromUserName>
