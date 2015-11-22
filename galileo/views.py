@@ -16,7 +16,7 @@ WECHAT_TOKEN = 'jcgalileo'
 AppID = ''
 AppSecret = ''
 
-fp_tmp = open('log_tmp.txt','a+')
+fp_tmp = open('log_tmp.txt','r+')
 
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
@@ -35,7 +35,7 @@ def index(request):
         xml = etree.fromstring(xmlstr)
         temprature = xml.find('tmprature')
         if temprature:
-            fp_tmp.seek(0,2)
+            #fp_tmp.seek(0,2)
             fp_tmp.write(temprature.text)
             fp.write(temptature)
 
