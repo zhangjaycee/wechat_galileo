@@ -2,11 +2,7 @@
     	<plugin>python</plugin> 
         <socket>/tmp/galileo.socket</socket>
         <chmod-socket>777</chmod-socket>
-        <pythonpath>/root/wechat/galileo</pythonpath>
-        <pythonpath>/root/wechat</pythonpath>
-<!--        <app mountpoint="/">
-                <script>wechat.wsgi</script>
-        </app>   -->
+        <pythonpath>/root/wechat_galileo/galileo</pythonpath>
         <module>wechat.wsgi</module>
         <master>true</master>
         <processes>1</processes>
