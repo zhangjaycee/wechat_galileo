@@ -10,19 +10,23 @@ import getinfo
 from wechat_sdk import WechatBasic
 from wechat_sdk.exceptions import ParseError
 from wechat_sdk.messages import TextMessage
-
-
+import json
+'''
 WECHAT_TOKEN = 'jcgalileo'
-AppID = ''
-AppSecret = ''
+AppID = 'wx4b7943f082770e22'
+AppSecret = '60186ab20d8e44bf2e7c496a9e7a34a1'
+'''
+WECHAT_TOKEN = 'jcgalileo2'
+AppID = 'wx5a13781f1ae1b5be'
+AppSecret = 'd4624c36b6795d1d99dcf0547af5443d'
 
 fp_tmp = open('log_tmp.txt','a+')
 
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
-    token=WECHAT_TOKEN
-    #appid=AppID,
-    #appsecret=AppSecret
+    token=WECHAT_TOKEN,
+    appid=AppID,
+    appsecret=AppSecret
 )
 
 @csrf_exempt
@@ -58,14 +62,20 @@ def index(request):
             content = message.content.strip()
             if content == u'功能':
                 reply_text = (
-                        '目前支持的功能：\n1...'
-                        '2...\n'
+                        '目前支持的功能：\n1.回复“温度”，查询113室温\n'
+                        '2.回复“拍照”，偷窥jc的生活状态\n'
                 )
                 response = wechat_instance.response_text(content=reply_text)
             if content == u'温度':
                 fp_tmp.seek(-4, 2)
                 reply_text = fp_tmp.read(4)
                 response = wechat_instance.response_text(content=reply_text)
+            if content == u'拍照':
+                #response = wechat_instance.response_text(content="debug....")
+		fp = open('galileo.jpg','rb')	
+		upload_info = wechat_instance.upload_media("image", fp)
+		image_id = upload_info['media_id']
+                response = wechat_instance.response_image(image_id)
  
         return HttpResponse(response, content_type="application/xml")
 
@@ -75,7 +85,7 @@ def checkSignature(request):
     nonce=request.GET.get('nonce',None)
     echostr=request.GET.get('echostr',None)
     #这里的token我放在setting，可以根据自己需求修改
-    token="jcgalileo"
+    token="jcgalileo2"
 
     tmplist=[token,timestamp,nonce]
     tmplist.sort()
