@@ -32,8 +32,11 @@ wechat_instance = WechatBasic(
     appsecret=AppSecret
 )
 
+light_flag = 0
+
 @csrf_exempt
 def index(request):
+    global light_flag
     if request.method=='GET':
         response=HttpResponse(checkSignature(request))
         return response
@@ -41,6 +44,7 @@ def index(request):
         xmlstr = smart_str(request.body)
         xml = etree.fromstring(xmlstr)
         temprature = xml.find('temprature')
+        light = xml.find('light')
         if temprature != None:
             fp_tmp.seek(0,2)
             fp_tmp.write(temprature.text)
@@ -50,6 +54,8 @@ def index(request):
                 image_id = upload_info['media_id']
                 wechat_instance.send_image_message(MY_OPENID, image_id)
             return HttpResponse("0")
+        if light != None:
+            return HttpResponse(str(light_flag))
         #获取open_id
         #open_id = xml.find('FromUserName')
         #if open_id != None:
@@ -77,21 +83,31 @@ def index(request):
             content = message.content.strip()
             if content == u'功能':
                 reply_text = (
-                        '目前支持的功能：\n1.回复“温度”，查询113室温\n'
-                        '2.回复“拍照”，偷窥jc的生活状态\n'
+                        '目前支持的功能：\n1.回复"温度"，查询113室温\n'
+                        '2.回复"拍照"，偷窥jc的生活状态\n'
+                        '3.回复"开灯"或"关灯"或"光控"，控制家中灯的亮灭\n'
                 )
                 response = wechat_instance.response_text(content=reply_text)
-            if content == u'温度':
+            elif content == u'温度':
                 fp_tmp.seek(-4, 2)
                 reply_text = fp_tmp.read(4)
                 response = wechat_instance.response_text(content=reply_text)
-            if content == u'拍照':
+            elif content == u'拍照':
                 #response = wechat_instance.response_text(content="debug....")
                 fp = open('galileo.jpg','rb')	
                 upload_info = wechat_instance.upload_media("image", fp)
                 image_id = upload_info['media_id']
                 response = wechat_instance.response_image(image_id)
- 
+            elif content == u'开灯':
+                light_flag = 1
+                response = wechat_instance.response_text(content='灯已开')
+            elif content == u'关灯':
+                light_flag = 0
+                response = wechat_instance.response_text(content='灯已关')
+            elif content == u'光控':
+                light_flag = 2
+                response = wechat_instance.response_text(content='灯已调为光控模式,室内较暗时自动打开')
+                
         return HttpResponse(response, content_type="application/xml")
 
 def checkSignature(request):
