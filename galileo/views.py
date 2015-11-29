@@ -20,7 +20,10 @@ WECHAT_TOKEN = 'jcgalileo2'
 AppID = 'wx5a13781f1ae1b5be'
 AppSecret = 'd4624c36b6795d1d99dcf0547af5443d'
 
+MY_OPENID = 'o2cILxORC3vAZHOMrCgcfeixBT2w'
+
 fp_tmp = open('log_tmp.txt','a+')
+fp_uid = open('log_uid.txt','a+')
 
 # 实例化 WechatBasic
 wechat_instance = WechatBasic(
@@ -41,7 +44,19 @@ def index(request):
         if temprature != None:
             fp_tmp.seek(0,2)
             fp_tmp.write(temprature.text)
+            if temprature.text == '1234':
+		        fp = open('galileo.jpg','rb')	
+	        	upload_info = wechat_instance.upload_media("image", fp)
+		        image_id = upload_info['media_id']
+                wechat_instance.send_image_message(MY_OPENID, imgae_id)
             return HttpResponse("0")
+        #获取open_id
+        #open_id = xml.find('FromUserName')
+        #if open_id != None:
+        #    fp_uid.seek(0,2)
+        #    fp_uid.write(open_id.text)
+        #    fp_uid.write('\n')
+        
         # 解析本次请求的 XML 数据
         try:
             wechat_instance.parse_data(data=request.body)
@@ -72,9 +87,9 @@ def index(request):
                 response = wechat_instance.response_text(content=reply_text)
             if content == u'拍照':
                 #response = wechat_instance.response_text(content="debug....")
-		fp = open('galileo.jpg','rb')	
-		upload_info = wechat_instance.upload_media("image", fp)
-		image_id = upload_info['media_id']
+		        fp = open('galileo.jpg','rb')	
+		        upload_info = wechat_instance.upload_media("image", fp)
+		        image_id = upload_info['media_id']
                 response = wechat_instance.response_image(image_id)
  
         return HttpResponse(response, content_type="application/xml")
