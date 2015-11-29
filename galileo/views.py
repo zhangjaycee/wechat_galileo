@@ -72,11 +72,10 @@ def index(request):
                 response = wechat_instance.response_text(content=reply_text)
             if content == u'拍照':
                 #response = wechat_instance.response_text(content="debug....")
-		fp = open('galileo.jpg','rb')	
-		upload_info = wechat_instance.upload_media("image", fp)
-		image_id = upload_info['media_id']
+                fp = open('galileo.jpg','rb')	
+                upload_info = wechat_instance.upload_media("image", fp)
+                image_id = upload_info['media_id']
                 response = wechat_instance.response_image(image_id)
- 
         return HttpResponse(response, content_type="application/xml")
 
 def checkSignature(request):
