@@ -16,4 +16,5 @@
         <reload-on-rss>192</reload-on-rss>
         <vacuum/>
         <daemonize>/var/log/uwsgi.log</daemonize>
+        <py-autoreload>1</py-autoreload>
 </uwsgi>
